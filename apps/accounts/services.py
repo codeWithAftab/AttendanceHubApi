@@ -1,6 +1,7 @@
 from .models import *
 from exceptions.restapi import CustomAPIException
 from firebase_admin.auth import UserRecord
+from authentication.firebase import get_user_by_phone_number 
 
 class CustomUserManager:
     def __init__(self, uid=None):
@@ -111,3 +112,26 @@ class CustomUserManager:
         
         # if device not exist then simply create device
         return True
+
+def get_user_by_user_id(*, user_id: uuid.UUID):
+    try:
+        return CustomUser.objects.get(uuid=user_id)
+
+    except:
+        raise CustomAPIException(detail=f"user not found for user_id : {user_id}")
+    
+def check_phone_number_availablity(phone_number: str):
+    try:
+        firebase_user = get_user_by_phone_number(phone_number)
+    except Exception as e:
+        return {"is_exist": False, "msg": str(e)}
+
+    try:
+        user = CustomUser.objects.get(uid=firebase_user.uid)
+        user.phone_number = phone_number
+        user.save()
+        
+        return {"is_exist": True, "msg": "exist in firebase and db"}
+    
+    except Exception as e:
+        return {"is_exist": True, "msg": "exist in firebase not in db"}

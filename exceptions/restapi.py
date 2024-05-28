@@ -36,6 +36,7 @@ class CustomAPIException(APIException):
         super().__init__(detail, code)
         try:
             self.detail = detail
+            print(detail)
             error = CustomErrors.objects.get(code=error_code)
             self.status_code = error.status_code
             serializer = ErrorSerializer(error)

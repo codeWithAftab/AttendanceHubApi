@@ -5,12 +5,12 @@ from django.contrib.auth.admin import UserAdmin
 @admin.register(CustomUser)
 class CustomUserAdmin(admin.ModelAdmin):
     model = CustomUser
-    list_display = ("uid", 'email', 'first_name', 'last_name', 'is_partner', 'is_superuser')
+    list_display = ("uuid", 'email', 'first_name', 'last_name', 'is_partner', 'is_superuser')
     list_filter = ('is_staff', 'is_active', 'gender', 'is_partner')
     fieldsets = (
         ("Auth Details", {'fields': ('email', 'password', "uid")}),
         ('Personal Info', {'fields': ('first_name', 'last_name', 'phone_number', 'date_of_birth', 'address_line', 'zip_code', 'country_code', 'gender', 'image', 'cover_image')}),
-        ('Permissions', {'fields': ('is_staff', 'is_active')}),
+        ('Permissions', {'fields': ('is_staff', 'is_active', 'is_partner')}),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )
     add_fieldsets = (

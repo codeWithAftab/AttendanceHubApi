@@ -6,6 +6,8 @@ from firebase_admin import auth, messaging, credentials
 from rest_framework import authentication
 from exceptions.firebase import *
 from decouple import config
+import phonenumbers
+from firebase_admin.auth import UserRecord
 
 
 cred = credentials.Certificate({
@@ -30,10 +32,11 @@ class FirebaseAuthentication(authentication.BaseAuthentication):
         auth_header = request.META.get("HTTP_AUTHORIZATION")
         is_testing = request.GET.get("is_testing", False)
         if is_testing:
-            uid = "aftabuid" # user for devl
+            uid = "DLxv8hBWgtUopvaowPyA6ep7rOR2" # user for devl
             try:
                 user = CustomUser.objects.get(uid=uid)
                 user.last_login = timezone.localtime()
+                
             except Exception:
                 raise InvalidAuthToken("Please register this token first @ /api/v1/accounts/user/register/")
             
@@ -123,6 +126,12 @@ class FirebaseAuthentication(authentication.BaseAuthentication):
             raise FirebaseError()
        
         return auth.get_user(uid=uid) 
+
+def get_user_by_phone_number( phone_number: str ) -> UserRecord:
+    my_number = phonenumbers.parse(f"+{phone_number}")
+    clean_phone = phonenumbers.format_number(my_number, phonenumbers.PhoneNumberFormat.E164)
+    user = firebase_admin.auth.get_user_by_phone_number(clean_phone)
+    return user
     
 
 def send_notification_to_multiple(title: str, body: str, data, tokens):
@@ -153,3 +162,4 @@ def send_notification_to_multiple(title: str, body: str, data, tokens):
         print('List of tokens that caused failures: {0}'.format(failed_tokens))
         
     return response
+

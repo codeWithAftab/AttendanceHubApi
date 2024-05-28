@@ -4,6 +4,8 @@ from rest_framework.views import APIView
 from apps.accounts.models import CustomUser
 from rest_framework.response import Response
 from exceptions.restapi import CustomAPIException
+from apps.accounts.services import *
+from rest_framework import status
 from apps.accounts.services import CustomUserManager
 from authentication.firebase import FirebaseAuthentication
 
@@ -65,3 +67,33 @@ class RegisterApi_v3(APIView):
         user_manager = UserSerializer(uid=firebase_user.uid)
         user = user_manager.update_user(**request.data)
         return Response({"data": UserSerializer(user).data})
+    
+
+class PhoneNumberExistanceAPI(APIView):
+    class InputSerializer(serializers.Serializer):
+        phone_number = serializers.CharField()
+   
+    def get(self, request):
+        serializer = self.InputSerializer(data=request.GET)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except Exception as e:
+            raise CustomAPIException(detail=str(e), error_code="MissingFieldError")
+        
+        phone_number = serializer.data["phone_number"]
+        response = check_phone_number_availablity(phone_number=phone_number)
+        
+        return Response(response)
+        
+
+class UserProfileAPI(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    
+    def get(self, request, *args, **kwargs):
+        serializer = UserSerializer(request.user)
+        response = {
+            "status":200,
+            "data":serializer.data
+        }
+        return Response(data=response, status=status.HTTP_200_OK)
+    

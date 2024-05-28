@@ -25,8 +25,8 @@ class BaseModel(models.Model):
 
 # Create your models here.
 class CustomUser(BaseModel, AbstractUser):
-    uuid = models.CharField(max_length=255, default=uuid.uuid1)
-    uid = models.CharField(max_length=255) # add unique=True
+    uuid = models.CharField(max_length=255, primary_key=True, default=uuid.uuid1)
+    uid = models.CharField(max_length=255, unique=True) # add unique=True
     username = models.CharField(verbose_name="username",max_length=122, unique=True, null=True,blank=True)
     image = models.ImageField(upload_to=upload_profile_images, blank=True, null=True)
     cover_image = models.ImageField(upload_to=upload_cover_image, null=True, blank=True)
@@ -50,13 +50,16 @@ class CustomUser(BaseModel, AbstractUser):
     is_partner = models.BooleanField(default=False)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
-
+    
     
     objects = CustomUserManager()
 
     def __str__(self):
         return f"{self.uid} - name: {self.first_name}"
 
+    @property
+    def joined_fitness_centre(self):
+        return self.joined_fitness_centres.all()
 
 
 class Device(models.Model):
