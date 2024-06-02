@@ -36,11 +36,13 @@ class CustomUser(BaseModel, AbstractUser):
     phone_number  = models.CharField(max_length=20, null=True, blank=True)
     weight = models.DecimalField(max_digits=5, decimal_places=2, null=True)
     height = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+
     GENDERS = (
         ("male", "MALE"),
         ("female", "FEMALE"),
         ("other", "OTHER"),
     )
+
     gender = models.CharField(max_length=10, choices=GENDERS, null=True)
     address_line = models.CharField(max_length=200, null=True, blank=True)
     zip_code = models.CharField(max_length=6, null=True, blank=True)
@@ -48,19 +50,18 @@ class CustomUser(BaseModel, AbstractUser):
     country_code = models.IntegerField(default=91) # 91 for india.
     date_of_birth = models.DateField(null=True, blank=True)
     is_partner = models.BooleanField(default=False)
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
-    
-    
+
+    joined_fitness_centre = models.ForeignKey( "gym.FitnessCentre", on_delete=models.CASCADE, null=True )
+
     objects = CustomUserManager()
 
     def __str__(self):
         return f"{self.uid} - name: {self.first_name}"
 
-    @property
-    def joined_fitness_centre(self):
-        return self.joined_fitness_centres.all()
-
+  
 
 class Device(models.Model):
     users = models.ManyToManyField(CustomUser, related_name="devices")

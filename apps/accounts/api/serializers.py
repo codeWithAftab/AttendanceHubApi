@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from apps.gym.api.serializers import FitnessCentreSerializer
+from apps.gym.api.serializers import UserFitnessCentreSerializer, AdminFitnessCentreSerializer
 
 class UserSerializer(serializers.Serializer):
     first_name = serializers.CharField()
@@ -8,9 +8,10 @@ class UserSerializer(serializers.Serializer):
     phone_number = serializers.CharField()
     date_of_birth = serializers.DateField()
     zip_code = serializers.IntegerField()
-    joined_fitness_centres = FitnessCentreSerializer(many=True)
+    joined_fitness_centre = UserFitnessCentreSerializer()
     is_partner = serializers.BooleanField()
     address_line = serializers.CharField()
+    admin_of_fitness_centre = AdminFitnessCentreSerializer()
 
 
 # class CustomRegisterSerializer_v2(serializers.ModelSerializer):

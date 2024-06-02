@@ -8,4 +8,7 @@ urlpatterns = [
     path('fitness/centre/membership/plan/<int:membership_id>/delete/', views.DeleteMembershipPlan.as_view()),
     path('fitness/centre/membership/plan/<int:membership_id>/update/', views.UpdateMembershipPlan.as_view()),
     path('fitness/centre/membership/plans/', views.CreateMembershipPlan.as_view()),
+    path('fitness/centre/user/membership/start/', views.StartUserMembershipAPI.as_view()),
+    path('fitness/centre/member/add/', views.AddMemberToFitnessCentreAPI.as_view()),
+    path('fitness/centre/member/remove/', views.RemoveMemberFromFitnessCentreAPI.as_view()),
 ]

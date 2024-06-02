@@ -9,7 +9,7 @@ class CustomUserAdmin(admin.ModelAdmin):
     list_filter = ('is_staff', 'is_active', 'gender', 'is_partner')
     fieldsets = (
         ("Auth Details", {'fields': ('email', 'password', "uid")}),
-        ('Personal Info', {'fields': ('first_name', 'last_name', 'phone_number', 'date_of_birth', 'address_line', 'zip_code', 'country_code', 'gender', 'image', 'cover_image')}),
+        ('Personal Info', {'fields': ('first_name', 'last_name', 'phone_number', 'date_of_birth', 'address_line', 'zip_code', 'country_code', 'gender', 'image', 'cover_image', 'joined_fitness_centre')}),
         ('Permissions', {'fields': ('is_staff', 'is_active', 'is_partner')}),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )

@@ -6,21 +6,39 @@ class FitnessCentreMembershipSerializer(serializers.ModelSerializer):
         model = FitnessCentreMembership
         fields = "__all__"
 
-class FitnessCentreSerializer(serializers.ModelSerializer):
+
+class UserSerializer(serializers.Serializer):
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+    email = serializers.CharField()
+    uuid = serializers.UUIDField()
+
+class UserFitnessCentreSerializer(serializers.Serializer):
+    owner = UserSerializer()
+    name = serializers.CharField()
+    cover_image = serializers.CharField()
+    description = serializers.CharField()
+    phone_number = serializers.CharField()
+    address = serializers.CharField()
     memberships = FitnessCentreMembershipSerializer(many=True)
 
-    class Meta:
-        model = FitnessCentre
-        fields = [ "owner", 
-                  "name", 
-                  "cover_image",
-                  "address", 
-                  "phone_number", 
-                  "description",
-                  "memberships"
-                  ]
+class AdminFitnessCentreSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    cover_image = serializers.CharField()
+    description = serializers.CharField()
+    phone_number = serializers.CharField()
+    address = serializers.CharField()
+    memberships = FitnessCentreMembershipSerializer(many=True)
+
+
     
-    
+class MembershipSerializer(serializers.Serializer):
+    member = serializers.CharField()
+    # fitness_centre = FitnessCentreSerializer()
+    membership_type = FitnessCentreMembershipSerializer()
+    start_date = serializers.DateTimeField()
+    end_date = serializers.DateTimeField()
+
 
 
 

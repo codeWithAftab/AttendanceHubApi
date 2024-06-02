@@ -4,7 +4,7 @@ from exceptions.restapi import CustomAPIException
 from apps.gym.services import *
 from rest_framework.response import Response
 from authentication.firebase import FirebaseAuthentication
-from apps.gym.api.serializers import FitnessCentreSerializer, FitnessCentreMembershipSerializer
+from apps.gym.api.serializers import UserFitnessCentreSerializer, FitnessCentreMembershipSerializer, MembershipSerializer
 from apps.gym.models import FitnessCentre, FitnessCentreMembership
 from rest_framework import status
 
@@ -29,7 +29,7 @@ class RegisterFitnessCentreAPI(APIView):
         fitness_centre = register_fitness_centre(owner=request.user,
                                                 **serializer.data  )
         
-        output_serializer = FitnessCentreSerializer(fitness_centre)
+        output_serializer = UserFitnessCentreSerializer(fitness_centre)
         return Response({"data": output_serializer.data}, status=status.HTTP_201_CREATED)
 
 
@@ -38,7 +38,7 @@ class GetOwnerFitnessCentreAPI(APIView):
 
     def get(self, request):
         fitness_centre = get_fitness_centre_by_owner(owner=request.user)                                
-        output_serializer = FitnessCentreSerializer(fitness_centre)
+        output_serializer = UserFitnessCentreSerializer(fitness_centre)
         return Response({"data": output_serializer.data})
 
 class CreateMembershipPlan(APIView):
@@ -105,7 +105,7 @@ class GetOwnerFitnessCentreAPI(APIView):
 
     def get(self, request):
         fitness_centre = get_fitness_centre_by_owner(owner=request.user)                                
-        output_serializer = FitnessCentreSerializer(fitness_centre)
+        output_serializer = UserFitnessCentreSerializer(fitness_centre)
         return Response({"data": output_serializer.data})
 
 
@@ -125,7 +125,7 @@ class AddMemberToFitnessCentreAPI(APIView):
         user_id = serializer.data["user_id"]
         fitness_centre = add_user_to_fitness_centre( owner=request.user, 
                                                      user_id=user_id )
-        output_serializer = FitnessCentreSerializer(fitness_centre)
+        output_serializer = UserFitnessCentreSerializer(fitness_centre)
         return Response({"data": output_serializer.data})
 
 class RemoveMemberFromFitnessCentreAPI(APIView):
@@ -134,7 +134,7 @@ class RemoveMemberFromFitnessCentreAPI(APIView):
     class InputSerializer(serializers.Serializer):
         user_id = serializers.UUIDField()
        
-    def post(self, request):
+    def delete(self, request):
         serializer = self.InputSerializer(data=request.data)
         try:
             serializer.is_valid(raise_exception=True)
@@ -142,10 +142,31 @@ class RemoveMemberFromFitnessCentreAPI(APIView):
             raise CustomAPIException(detail=str(e), error_code="MissingFieldError")
         
         user_id = serializer.data["user_id"]
-        fitness_centre = add_user_to_fitness_centre( owner=request.user, 
+        fitness_centre = remove_user_from_fitness_centre( owner=request.user, 
                                                      user_id=user_id )
-        output_serializer = FitnessCentreSerializer(fitness_centre)
-        return Response({"data": output_serializer.data})
+        return Response(status=status.HTTP_204_NO_CONTENT)
         
+    
+class StartUserMembershipAPI(APIView):
+    authentication_classes = [FirebaseAuthentication]
+    
+    class InputSerializer(serializers.Serializer):
+        user_id = serializers.UUIDField()
+        membership_id = serializers.PrimaryKeyRelatedField(queryset=FitnessCentreMembership.objects.all())
+       
+    def post(self, request):
+        serializer = self.InputSerializer(data=request.data)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except Exception as e:
+            raise CustomAPIException(detail=str(e), error_code="MissingFieldError")
+        
+        membership = start_user_membership(owner=request.user,
+                              **serializer.data
+                              )
+        
+        output_serializer = MembershipSerializer(membership)
+        
+        return Response({"data": output_serializer.data})
         
 
