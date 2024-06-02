@@ -54,8 +54,7 @@ class CustomUser(BaseModel, AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-    joined_fitness_centre = models.IntegerField( )
-    # joined_fitness_centre = models.ForeignKey( "gym.FitnessCentre", on_delete=models.CASCADE, null=True )
+    joined_fitness_centre = models.ForeignKey( "gym.FitnessCentre", on_delete=models.CASCADE, null=True )
 
     objects = CustomUserManager()
 
