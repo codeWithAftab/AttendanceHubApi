@@ -14,6 +14,8 @@ class UserSerializer(serializers.Serializer):
     is_partner = serializers.BooleanField()
     address_line = serializers.CharField()
     admin_of_fitness_centre = AdminFitnessCentreSerializer()
+    weight = serializers.FloatField()
+    height = serializers.FloatField()
 
     def get_cover_image(self, obj):
         try:
