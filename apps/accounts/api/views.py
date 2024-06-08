@@ -64,7 +64,7 @@ class RegisterApi_v3(APIView):
         
     def patch(self, request, *args,  **kwargs):
         firebase_user = self._get_firebase_user(request=request)
-        user_manager = UserSerializer(uid=firebase_user.uid)
+        user_manager = CustomUserManager(uid=firebase_user.uid)
         user = user_manager.update_user(**request.data)
         return Response({"data": UserSerializer(user, context={"request":request}).data})
     
