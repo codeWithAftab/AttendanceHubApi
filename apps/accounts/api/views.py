@@ -56,17 +56,17 @@ class RegisterApi_v3(APIView):
         
         if not firebase_user.provider_data:
             user = user_manager.create_guest_user(firebase_user, **serializer.data)
-            return Response({"data": UserSerializer(user).data})
+            return Response({"data": UserSerializer(user, context={"request":request}).data})
 
         user = user_manager.create_user(firebase_user, **serializer.data)
-        return Response({"data": UserSerializer(user).data})
+        return Response({"data": UserSerializer(user, context={"request":request}).data})
         
         
     def patch(self, request, *args,  **kwargs):
         firebase_user = self._get_firebase_user(request=request)
         user_manager = UserSerializer(uid=firebase_user.uid)
         user = user_manager.update_user(**request.data)
-        return Response({"data": UserSerializer(user).data})
+        return Response({"data": UserSerializer(user, context={"request":request}).data})
     
 
 class PhoneNumberExistanceAPI(APIView):
@@ -90,7 +90,7 @@ class UserProfileAPI(APIView):
     authentication_classes = [FirebaseAuthentication]
     
     def get(self, request, *args, **kwargs):
-        serializer = UserSerializer(request.user)
+        serializer = UserSerializer(request.user, context={"request":request})
         response = {
             "status":200,
             "data":serializer.data
