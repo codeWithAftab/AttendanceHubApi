@@ -108,6 +108,9 @@ class FirebaseAuthentication(authentication.BaseAuthentication):
         # testing purpose
         if request.GET.get("is_testing", False):
             return auth.get_user(uid="DLxv8hBWgtUopvaowPyA6ep7rOR2") 
+        
+        if request.GET.get("is_dev_testing", False):
+            return auth.get_user(uid="pLXoDZ1lFqNAtPwQK8aXMeWUbCT2") 
 
         if not auth_header:
             raise NoAuthToken("No auth token provided")
