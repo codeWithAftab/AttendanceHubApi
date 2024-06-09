@@ -15,8 +15,8 @@ class GetBodyPartsAPI(APIView):
         upper_body_parts = get_all_body_parts(body_part_type="upper")
         lower_body_parts = get_all_body_parts(body_part_type="lower")
 
-        upper_body_part_serializer = BodyPartSerializer(upper_body_parts, many=True)
-        lower_body_part_serializer = BodyPartSerializer(lower_body_parts, many=True)
+        upper_body_part_serializer = BodyPartSerializer(upper_body_parts, many=True, context={"request": request})
+        lower_body_part_serializer = BodyPartSerializer(lower_body_parts, many=True, context={"request": request})
 
         return Response({"data": {
             "upper": upper_body_part_serializer.data,
@@ -36,6 +36,5 @@ class GetBodyPartExcercisesAPI(APIView):
         
         body_parts = get_body_part_excercises(**serializer.data)
 
-        serializer = ExerciseSerializer(body_parts, many=True)
-
+        serializer = ExerciseSerializer(body_parts, many=True, context={"request": request})
         return Response({"data": serializer.data})
