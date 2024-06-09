@@ -36,8 +36,8 @@ class MembershipSerializer(serializers.Serializer):
     member = serializers.CharField()
     # fitness_centre = FitnessCentreSerializer()
     membership_type = FitnessCentreMembershipSerializer()
-    start_date = serializers.DateTimeField()
-    end_date = serializers.DateTimeField()
+    start_date = serializers.DateField()
+    end_date = serializers.DateField()
 
 
 
