@@ -139,14 +139,13 @@ def start_user_membership(*,
     return membership
 
 
-def get_active_memberships( member: CustomUser, 
-                            fitness_centre: FitnessCentre
+def get_user_active_memberships( member: CustomUser, 
                             ) -> Membership:
     
     today = timezone.now().date()
     return Membership.objects.filter(
         member=member, 
-        membership_type__fitness_centre=fitness_centre,
+        membership_type__fitness_centre=member.joined_fitness_centre,
         start_date__lte=today,
         end_date__gte=today
     )

@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from apps.gym.api.serializers import UserFitnessCentreSerializer, AdminFitnessCentreSerializer
+from apps.gym.api.serializers import *
+from apps.gym.services import get_user_active_memberships
 
 class UserSerializer(serializers.Serializer):
     first_name = serializers.CharField()
@@ -16,6 +17,7 @@ class UserSerializer(serializers.Serializer):
     admin_of_fitness_centre = AdminFitnessCentreSerializer()
     weight = serializers.FloatField()
     height = serializers.FloatField()
+    active_membership = serializers.SerializerMethodField()
 
     def get_cover_image(self, obj):
         try:
@@ -33,3 +35,7 @@ class UserSerializer(serializers.Serializer):
         
         except:
             return None
+    
+    def get_active_membership(self, obj):
+        serializer = MembershipSerializer(get_user_active_memberships(member=obj), many=True)   
+        return serializer.data
