@@ -51,7 +51,7 @@ class Membership(BaseModel):
     # fitness_centre = models.ForeignKey(FitnessCentre, on_delete=models.CASCADE, related_name="sold_memberships")
     membership_type = models.ForeignKey(FitnessCentreMembership, on_delete=models.CASCADE)
     start_date = models.DateField(default=timezone.datetime.today())
-    end_date = models.DateField()
+    end_date = models.DateField(null=True)
    
     def __str__(self):
         return f'{self.member} - {self.membership_type}'
