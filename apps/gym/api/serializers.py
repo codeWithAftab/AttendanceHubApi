@@ -25,7 +25,7 @@ class UserFitnessCentreSerializer(serializers.Serializer):
     def get_cover_image(self, obj):
         try:
             request = self.context["request"]
-            return request.build_absolute_uri(obj.image.url)
+            return request.build_absolute_uri(obj.cover_image.url)
         
         except Exception as e:
             print(e)
