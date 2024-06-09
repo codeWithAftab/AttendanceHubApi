@@ -11,7 +11,7 @@ class UserSerializer(serializers.Serializer):
     phone_number = serializers.CharField()
     date_of_birth = serializers.DateField()
     zip_code = serializers.IntegerField()
-    joined_fitness_centre = UserFitnessCentreSerializer()
+    joined_fitness_centre = serializers.SerializerMethodField()
     is_partner = serializers.BooleanField()
     address_line = serializers.CharField()
     admin_of_fitness_centre = AdminFitnessCentreSerializer()
@@ -39,3 +39,6 @@ class UserSerializer(serializers.Serializer):
     def get_active_membership(self, obj):
         serializer = MembershipSerializer(get_user_active_memberships(member=obj), many=True)   
         return serializer.data
+    
+    def get_joined_fitness_centre(self, obj):
+        return UserFitnessCentreSerializer(obj.joined_fitness_centre, context=self.context)

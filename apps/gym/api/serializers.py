@@ -16,11 +16,20 @@ class UserSerializer(serializers.Serializer):
 class UserFitnessCentreSerializer(serializers.Serializer):
     owner = UserSerializer()
     name = serializers.CharField()
-    cover_image = serializers.CharField()
+    cover_image = serializers.SerializerMethodField()
     description = serializers.CharField()
     phone_number = serializers.CharField()
     address = serializers.CharField()
     memberships = FitnessCentreMembershipSerializer(many=True)
+    
+    def get_cover_image(self, obj):
+        try:
+            request = self.context["request"]
+            return request.build_absolute_uri(obj.image.url)
+        
+        except Exception as e:
+            print(e)
+            return None
 
 class AdminFitnessCentreSerializer(serializers.Serializer):
     name = serializers.CharField()
