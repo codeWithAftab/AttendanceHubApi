@@ -41,4 +41,4 @@ class UserSerializer(serializers.Serializer):
         return serializer.data
     
     def get_joined_fitness_centre(self, obj):
-        return UserFitnessCentreSerializer(obj.joined_fitness_centre, context=self.context)
+        return UserFitnessCentreSerializer(obj.joined_fitness_centre, context=self.context).data
