@@ -20,7 +20,8 @@ class MembershipAdmin(admin.ModelAdmin):
     list_display = ( 'membership_type', 'start_date', 'end_date', 'active_status', 'created_on', 'updated_on')
     search_fields = ('member__username', 'membership_type__title', 'membership_type__fitness_centre__name')
     list_filter = ( 'membership_type__membership_type', 'created_on', 'updated_on')
-
+    readonly_fields = ["end_date"]
+    
     def active_status(self, obj):
         return obj.is_active
     
