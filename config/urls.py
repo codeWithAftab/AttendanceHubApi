@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/accounts/', include("apps.accounts.api.urls")),
     path('api/v1/master/', include("apps.gym.api.urls")),
+    path('api/v1/master/workout/', include("apps.workout.api.urls")),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

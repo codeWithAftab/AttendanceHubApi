@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'apps.accounts',
     'apps.core',
-    'apps.gym'
+    'apps.gym',
+    'apps.workout'
 ]
 
 MIDDLEWARE = [
