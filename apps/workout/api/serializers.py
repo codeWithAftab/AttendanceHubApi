@@ -22,7 +22,8 @@ class ExerciseSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=100)
     description = serializers.CharField()
     image = serializers.SerializerMethodField()
-
+    explaination = serializers.CharField()
+    
     def get_image(self, obj):
         try:
             request = self.context["request"]
