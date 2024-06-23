@@ -31,6 +31,7 @@ class Exercise(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField()
     body_parts = models.ManyToManyField(BodyPart, blank=True)
+    explaination = models.TextField()
 
     def __str__(self):
         return self.name
