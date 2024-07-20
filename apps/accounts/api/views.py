@@ -1,93 +1,47 @@
+# standard imports.
 from rest_framework import serializers
-from .serializers import UserSerializer
-from rest_framework.views import APIView
-from apps.accounts.models import CustomUser
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
+
+# third part imports.
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
+# local imports
+from .serializers import UserSerializer, StaffMemberSerializer
 from exceptions.restapi import CustomAPIException
 from apps.accounts.services import *
-from rest_framework import status
-from apps.accounts.services import CustomUserManager
-from authentication.firebase import FirebaseAuthentication
+from apps.accounts.services import create_user, update_user
 
 
-class RegisterApi_v3(APIView):
-    class InputSerializer(serializers.ModelSerializer):
-        device_id = serializers.CharField(required=True)
-        
-        class Meta:
-            model = CustomUser
-            fields = [ 
-                       "phone_number", 
-                       "device_id", 
-                       "first_name", 
-                       "last_name", 
-                       'gender', 
-                       "image",
-                        'cover_image',
-                        'first_name',
-                        'last_name',
-                        'phone_number',
-                        'weight',
-                        'height',
-                        'gender',
-                        'address_line',
-                        'zip_code',
-                        'country',
-                        'country_code',
-                        'date_of_birth',
-                        'is_partner',
-                      ]
-        
-    def _get_firebase_user(self, request):
-        fra = FirebaseAuthentication()
-        return fra.get_firebase_user(request=request)
+class RegisterAPI(APIView):
+    class InputSerializer(serializers.Serializer):
+        first_name = serializers.CharField( max_length=20 )
+        last_name = serializers.CharField( max_length=20, required=False )
+        image = serializers.ImageField( required=False )
+        email = serializers.EmailField( required=True )
+        password = serializers.CharField( required=True )
+        role = serializers.ChoiceField( choices=USER_ROLES, default="staff" )
 
     def post(self, request, *args,  **kwargs):
-        firebase_user = self._get_firebase_user(request=request)
-        print(firebase_user.uid)
         serializer = self.InputSerializer(data=request.data)
-
         try:
             serializer.is_valid(raise_exception=True)
         except Exception as e:
             raise CustomAPIException(detail=str(e), error_code="MissingFieldError")
         
-        user_manager = CustomUserManager(uid=firebase_user.uid)
-        
-        if not firebase_user.provider_data:
-            user = user_manager.create_guest_user(firebase_user, **serializer.data)
-            return Response({"data": UserSerializer(user, context={"request":request}).data})
-
-        user = user_manager.create_user(firebase_user, **serializer.data)
+   
+        user = create_user( **serializer.validated_data )
         return Response({"data": UserSerializer(user, context={"request":request}).data})
-        
         
     def patch(self, request, *args,  **kwargs):
-        firebase_user = self._get_firebase_user(request=request)
-        user_manager = CustomUserManager(uid=firebase_user.uid)
-        user = user_manager.update_user(**request.data)
+        # need to work
+        user = update_user(**request.data)
         return Response({"data": UserSerializer(user, context={"request":request}).data})
-    
 
-class PhoneNumberExistanceAPI(APIView):
-    class InputSerializer(serializers.Serializer):
-        phone_number = serializers.CharField()
-   
-    def get(self, request):
-        serializer = self.InputSerializer(data=request.GET)
-        try:
-            serializer.is_valid(raise_exception=True)
-        except Exception as e:
-            raise CustomAPIException(detail=str(e), error_code="MissingFieldError")
-        
-        phone_number = serializer.data["phone_number"]
-        response = check_phone_number_availablity(phone_number=phone_number)
-        
-        return Response(response)
-        
 
 class UserProfileAPI(APIView):
-    authentication_classes = [FirebaseAuthentication]
+    authentication_classes = [JWTAuthentication]
     
     def get(self, request, *args, **kwargs):
         serializer = UserSerializer(request.user, context={"request":request})
@@ -97,3 +51,53 @@ class UserProfileAPI(APIView):
         }
         return Response(data=response, status=status.HTTP_200_OK)
     
+
+class AddNewStaffMemberAPI(APIView):
+    authentication_classes = [JWTAuthentication]
+
+    class InputSerializer(serializers.Serializer):
+        first_name = serializers.CharField( max_length=20 )
+        last_name = serializers.CharField( max_length=20, required=False )
+        image = serializers.ImageField( required=False )
+        email = serializers.EmailField( required=True )
+        password = serializers.CharField( required=True )
+    
+    def post(self, request, *args,  **kwargs):
+        serializer = self.InputSerializer(data=request.data)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except Exception as e:
+            raise CustomAPIException(detail=str(e), error_code="MissingFieldError")
+        
+        user = create_staff_member(manager=request.user, **serializer.validated_data)
+        return Response({"data": StaffMemberSerializer(user, context={"request":request}).data})
+    
+
+class GetStaffMembersDetailAPI(APIView):
+    authentication_classes = [JWTAuthentication]
+
+    def get(self, request, *args,  **kwargs):
+        staff_members = get_all_staff_members(manager=request.user)
+        output_serializer = StaffMemberSerializer(staff_members, many=True)
+        return Response({"data": output_serializer.data })
+
+
+class UpdateStaffMemberDetailsAPI(APIView):
+    authentication_classes = [JWTAuthentication]
+
+    class InputSerializer(serializers.Serializer):
+        employee_id = serializers.CharField( max_length=20 )
+        first_name = serializers.CharField( max_length=20 )
+        last_name = serializers.CharField( max_length=20, required=False )
+        image = serializers.ImageField( required=False )
+       
+    def patch(self, request, *args,  **kwargs):
+        serializer = self.InputSerializer(data=request.data)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except Exception as e:
+            raise CustomAPIException(detail=str(e), error_code="MissingFieldError")
+        
+        user = update_staff_member_details(manager=request.user, **serializer.validated_data)
+        return Response({"data": StaffMemberSerializer(user, context={"request":request}).data})
+  

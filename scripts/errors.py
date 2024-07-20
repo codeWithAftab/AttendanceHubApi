@@ -1,0 +1,5 @@
+[
+    "MissingFieldError",
+    "EmailAlreadyExist",
+    "WrongEmployeeId"
+]

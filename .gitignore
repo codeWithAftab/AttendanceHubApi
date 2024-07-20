@@ -6,3 +6,5 @@ apps/*/api/__pycache__/
 */__pycache__/
 .venv/
 db.sqlite3
+media/
+static_cdn/
