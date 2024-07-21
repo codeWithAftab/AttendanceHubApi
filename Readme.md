@@ -20,74 +20,75 @@
   - Staff can mark attendance by uploading an image within their shift timings.
 
 ## Project Tree Structure.
-AttendanceHub/
 ├── apps/
-│   ├── accounts/
-│   │   ├── __init__.py
-│   │   ├── admin.py
-│   │   ├── decorators.py
-│   │   ├── managers.py
-│   │   ├── models.py
-│   │   ├── queries.py
-│   │   ├── services.py
-│   │   ├── urls.py
-│   │   └── views.py
-│   │   └── api/
-│   │       ├── __init__.py
-│   │       ├── serializers.py
-│   │       ├── urls.py
-│   │       └── views.py
-│   ├── core/
-│   │   ├── __init__.py
-│   │   ├── admin.py
-│   │   ├── models.py
-│   │   └── views.py
-│   ├── attendance/
-│   │   ├── __init__.py
-│   │   ├── admin.py
-│   │   ├── models.py
-│   │   ├── queries.py
-│   │   ├── services.py
-│   │   ├── urls.py
-│   │   ├── validations.py
-│   │   └── views.py
-│   │   └── api/
-│   │       ├── __init__.py
-│   │       ├── serializers.py
-│   │       ├── urls.py
-│   │       └── views.py
-│-- authentication/
-│    ├── __init__.py
+│ ├── accounts/
+│ │ ├── init.py
+│ │ ├── admin.py
+│ │ ├── decorators.py
+│ │ ├── managers.py
+│ │ ├── models.py
+│ │ ├── queries.py
+│ │ ├── services.py
+│ │ ├── urls.py
+│ │ └── views.py
+│ │ └── api/
+│ │ ├── init.py
+│ │ ├── serializers.py
+│ │ ├── urls.py
+│ │ └── views.py
+│ ├── core/
+│ │ ├── init.py
+│ │ ├── admin.py
+│ │ ├── models.py
+│ │ └── views.py
+│ ├── attendance/
+│ │ ├── init.py
+│ │ ├── admin.py
+│ │ ├── models.py
+│ │ ├── queries.py
+│ │ ├── services.py
+│ │ ├── urls.py
+│ │ ├── validations.py
+│ │ └── views.py
+│ │ └── api/
+│ │ ├── init.py
+│ │ ├── serializers.py
+│ │ ├── urls.py
+│ │ └── views.py
+│ └── authentication/
+│ ├── init.py
 ├── config/
-│    ├── __init__.py
-│    ├── asgi.py
-│    ├── urls.py
-│    ├── wsgi/
-│    │   ├── dev.py
-│    │   └── prod.py
-│    │── settings/
-│    │   ├── base.py
-│    │   ├── dev.py
-│    │   └── prod.py
+│ ├── init.py
+│ ├── asgi.py
+│ ├── urls.py
+│ ├── wsgi/
+│ │ ├── dev.py
+│ │ └── prod.py
+│ └── settings/
+│ ├── base.py
+│ ├── dev.py
+│ └── prod.py
 ├── exception/
-│    ├── auth.py
-│    ├── base.py
-│    ├── restapi.py/
+│ ├── auth.py
+│ ├── base.py
+│ └── restapi.py
 ├── helper/
-│    ├── __init__.py
-│    ├── constant.py
-│    ├── id_generator.py
-│    ├── serilaizers.py/
-│    ├── validation.py/
-│── schema/
-│    ├── __init__.py
-│    ├── request.py
-│── scripts/
+│ ├── init.py
+│ ├── constant.py
+│ ├── id_generator.py
+│ ├── serializers.py
+│ └── validation.py
+├── schema/
+│ ├── init.py
+│ ├── request.py
+├── scripts/
 ├── .gitignore
 ├── README.md
 ├── manage-dev.py
 ├── manage-prod.py
 └── requirements.txt
+
+
 
 
 
