@@ -124,7 +124,7 @@ AttendanceHub/
 
 # API Documentation
 
-## 1. Register User (Manager)
+## 1. Register User (Manager API)
 
 - **Endpoint:** `/api/v1/accounts/user/register/`
 - **Method:** `POST`
@@ -164,8 +164,37 @@ AttendanceHub/
     }
   }
 
+### 2. Obtain JWT Access Token
 
-## 2. Get User Profile
+**Endpoint:**
+
+`POST /api/v1/accounts/user/token/`
+
+**Request Body:**
+
+```json
+{
+    "email": "hello2@gmail.com",
+    "password": "12345678"
+}
+```
+
+**Description:**
+
+This API endpoint is used to obtain a JWT access token for authentication. You need to provide the user's email and password.
+
+**Response:**
+
+* **Status Code:** `200 OK`
+* **Content:**
+  ```json
+  {
+    "access": "jwt_access_token",
+    "refresh": "jwt_refresh_token"
+  }
+
+
+## 3. Get User Profile (For All type user.)
 
 - **Endpoint:** `/api/v1/accounts/user/profile/`
 - **Method:** `GET`
@@ -189,7 +218,7 @@ AttendanceHub/
     }
     ```
 
-## 3. Add New Staff Member
+## 4. Add New Staff Member (Manager API)
 
 - **Endpoint:** `/api/v1/accounts/staff/add/`
 - **Method:** `POST`
@@ -228,7 +257,7 @@ AttendanceHub/
     }
     
     
-## 4. Get Staff Members Details
+## 5. Get Staff Members Details
 
 - **Endpoint:** `/api/accounts/staff/list/`
 - **Method:** `GET`
@@ -273,9 +302,9 @@ AttendanceHub/
   - The `data` field contains a list of staff member details associated with the authenticated manager.
   - Each staff member entry includes the `user` object with personal and role-related information, as well as `employee_id` and `weekly_off` details.
  
-## 5. Update Staff Member Details
+## 6. Update Staff Member Details. (Manager API)
 
-- **Endpoint:** `/api/staff/update/`
+- **Endpoint:** `/api/v1/accounts/staff/update/`
 - **Method:** `PATCH`
 - **Authentication:** Required (JWT)
 - **Request Body:**
@@ -331,9 +360,9 @@ AttendanceHub/
 
       ```
 
-## 6. Assign Staff Shift (Manager API)
+## 7. Assign Staff Shift (Manager API)
 
-- **Endpoint:** `/api/staff/shift/`
+- **Endpoint:** `/api/v1/master/staff/shift/schedule/`
 - **Method:** `POST`
 - **Authentication:** Required (JWT)
 - **Request Body:**
@@ -401,9 +430,9 @@ AttendanceHub/
       }
       ```
 
-## 7. Assign Staff Weekly Off (Manager API)
+## 8. Assign Staff Weekly Off (Manager API)
 
-- **Endpoint:** `/api/staff/weekly-off/`
+- **Endpoint:** `/api/v1/master/staff/weekly-off/assign/`
 - **Method:** `POST`
 - **Authentication:** Required (JWT)
 - **Request Body:**
@@ -476,9 +505,9 @@ AttendanceHub/
       }
       ```
 
-## 8. Staff Member Assigned Shifts
+## 9. Get Staff Member Assigned Shifts
 
-- **Endpoint:** `/api/staff/assigned-shifts/`
+- **Endpoint:** `/api/v1/master/staff/assigned/shifts/`
 - **Method:** `GET`
 - **Authentication:** Required (JWT)
 
@@ -530,9 +559,9 @@ AttendanceHub/
       }
       ```
 
-## 9. Mark Staff Attendance
+## 10. Mark Staff Attendance
 
-- **Endpoint:** `/api/staff/mark-attendance/`
+- **Endpoint:** `/api/v1/master/staff/attendance/mark/`
 - **Method:** `POST`
 - **Authentication:** Required (JWT)
 - **Request Body:**
