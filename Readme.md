@@ -133,7 +133,7 @@ AttendanceHub/
    python manage-dev.py shell
   ```
 
-6. **Import the `create_error` function** from the `scripts` module:
+6. **Import the `create_errors` function** from the `scripts.errors` module:
     ```python
     from scripts.errors import create_errors
     ```
