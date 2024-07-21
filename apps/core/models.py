@@ -1,11 +1,12 @@
 from django.db import models
 
 class CustomErrors(models.Model):
-    code = models.CharField(max_length=122)
+    code = models.CharField(max_length=122, unique=True)
     status_code = models.IntegerField()
     detail = models.TextField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     count = models.PositiveIntegerField(default=1)
+
 
     def __str__(self) -> str:
         return f"{self.code}"
