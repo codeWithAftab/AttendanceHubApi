@@ -91,7 +91,7 @@ AttendanceHub/
 ├── manage-dev.py
 ├── manage-prod.py
 └── requirements.txt
-
+```
 
 
 
@@ -99,17 +99,11 @@ AttendanceHub/
 
 ### Requirements
 
-- Python 3.10
-- Django==5.0.6
-- djangorestframework==3.15.1
-- djangorestframework-simplejwt==5.3.1
-- pillow==10.3.0
-- pytz==2024.1
-- requests==2.32.2
-- sqlparse==0.5.0
-- typing_extensions==4.12.0
-- uritemplate==4.1.1
-- urllib3==2.2.1
+- Python 3.10+
+- Django
+- DjangoRestFramework
+- DjangoRestFramework-SimpleJWT
+- Pillow
 
 ### Installation
 
@@ -128,14 +122,21 @@ AttendanceHub/
    ```bash
    pip install -r requirements.txt
 
-## Documentation
+# API Documentation
 
-API documentation will be added separately. For detailed information about the available endpoints, please refer to the API documentation.
+## Register User (Manager)
 
-## Contributing
+- **Endpoint:** `/api/v1/accounts/user/register/`
+- **Method:** `POST`
+- **Authentication:** None
+- **Request Body:**
+  ```json
+ {
+    "first_name": "string",   // required
+    "last_name": "string",    // optional
+    "image": "file",          // optional
+    "email": "string",        // required
+    "password": "string",     // required
+    "role": "string"          // optional
+  }
 
-Contributions are welcome! Please open an issue or submit a pull request if you’d like to contribute.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
