@@ -1,4 +1,4 @@
-# AttendanceHub
+# AttendanceHub Api
 
 ---
 
@@ -121,6 +121,12 @@ AttendanceHub/
 3. Install the requirements:
    ```bash
    pip install -r requirements.txt
+
+4. Apply database Migrations:
+ ```bash
+   python manage.py makemigrations
+   python manage.py migrate
+  ```
 
 # API Documentation
 
