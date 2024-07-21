@@ -46,6 +46,40 @@ def get_staff_member_by_id(employee_id: str) -> Optional[StaffMember]:
     except StaffMember.DoesNotExist:
         return None
     
+def get_staff_member_shift_by_id(staff_member: StaffMember, shift_id: int):
+    try:
+        shift = Shift.objects.get(staff_member=staff_member, id=shift_id)
+        return shift
+    
+    except Shift.DoesNotExist as e:
+        print("Erro", e)
+        return None
+    
+def is_any_pending_interchange_request_exist(target: StaffMember, 
+                                             requester: StaffMember, 
+                                             requester_shift: Shift,
+                                             target_shift: Shift,
+                                             **kwargs) -> bool:
+    """
+    Check if there are any pending shift interchange requests between the given target and requester for the specified shifts.
+
+    Args:
+        target (StaffMember): The staff member who is the target of the interchange request.
+        requester (StaffMember): The staff member who is requesting the interchange.
+        requester_shift (Shift): The shift requested by the requester to be interchanged.
+        target_shift (Shift): The shift of the target to be interchanged.
+
+    Returns:
+        bool: True if there are any pending requests, False otherwise.
+    """
+    return ShiftInterchangeRequest.objects.filter(
+        target=target, 
+        requester=requester, 
+        requester_shift=requester_shift,
+        target_shift=target_shift, 
+        status='pending'
+    ).exists()
+
 
 def get_staff_member_shift(staff_member: CustomUser, day: str) -> Optional[Shift]:
     """
@@ -65,8 +99,6 @@ def get_staff_member_shift(staff_member: CustomUser, day: str) -> Optional[Shift
     except Shift.DoesNotExist:
         return None
     
-
-
 def get_staff_member_by_user(user: CustomUser) -> Optional[StaffMember]:
     """
     Retrieve the staff member associated with a given user.
@@ -79,6 +111,13 @@ def get_staff_member_by_user(user: CustomUser) -> Optional[StaffMember]:
     """
     try:
         return StaffMember.objects.get(user=user)
+    except StaffMember.DoesNotExist:
+        return None
+
+def get_staff_member_by_email(email: str) -> Optional[StaffMember]:
+  
+    try:
+        return StaffMember.objects.get(user__email=email)
     except StaffMember.DoesNotExist:
         return None
 
@@ -105,3 +144,25 @@ def is_member_already_marked_attendance(staff_member: StaffMember) -> bool:
         bool: True if attendance has already been marked, False otherwise.
     """
     return Attendance.objects.filter(staff_member=staff_member, date=now().date()).exists()
+
+
+def get_shift_interchange_request_by_id(*,
+                                        staff_member: StaffMember = None,
+                                        request_id: int):
+    """
+    Retrieves a shift interchange request by its ID, with optional staff member validation.
+
+    Args:
+        staff_member (StaffMember, optional): The staff member associated with the request. Defaults to None.
+        request_id (int): The ID of the shift interchange request to retrieve.
+
+    Returns:
+        ShiftInterchangeRequest or None: The shift interchange request if found, otherwise None.
+    """
+    try:
+   
+        request = ShiftInterchangeRequest.objects.get(id=request_id, target=staff_member)
+
+        return request
+    except ShiftInterchangeRequest.DoesNotExist:
+        return None

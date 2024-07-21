@@ -36,7 +36,7 @@ class CustomUser(BaseModel, AbstractUser):
 class StaffMember(models.Model):
     employee_id = models.CharField(max_length=122, unique=True, default=generate_employee_id)
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    weekly_off = models.JSONField(default=["saturday", "sunday"])
+    weekly_off = models.JSONField(default=["saturday", "sunday"], null=True, blank=True)
 
 
 class StaffManager(models.Model):

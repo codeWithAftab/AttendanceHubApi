@@ -164,7 +164,7 @@ AttendanceHub/
     }
   }
 
-### 2. Obtain JWT Access Token
+## 2. Obtain JWT Access Token
 
 **Endpoint:**
 
@@ -193,8 +193,58 @@ This API endpoint is used to obtain a JWT access token for authentication. You n
     "refresh": "jwt_refresh_token"
   }
 
+## 3. Update User API
 
-## 3. Get User Profile (For All type user.)
+**Endpoint:** `PATCH /api/v1/accounts/user/update/`
+
+**Authentication:** JWT Authentication
+
+**Request Body:**
+
+```json
+{
+    "first_name": "string",
+    "last_name": "string",
+    "image": "file",
+    "role": "staff"
+}
+```
+
+**Response Schema:**
+
+```json
+{
+    "data": {
+        "uuid": "5259ffa0-e77a-4fe4-af11-b7f48cc036b4",
+        "first_name": "Aftab",
+        "last_name": null,
+        "image": "http://127.0.0.1:8000/media/profile_images/1000000550_49hrcza.jpg",
+        "email": "hello82@gmail.com",
+        "role": 1
+    }
+}
+```
+
+**Errors:**
+
+*   **Code:** `MissingFieldError`
+    
+    *   **Description:** Required fields are missing or invalid.
+    *   **Response:**
+
+```json
+    {
+        "id": 9,
+        "code": "MissingFieldError",
+        "status_code": 400,
+        "detail": "Required fields are missing or invalid.",
+        "description": "",
+        "count": 1
+    }
+```
+
+
+## 4. Get User Profile (For All type user.)
 
 - **Endpoint:** `/api/v1/accounts/user/profile/`
 - **Method:** `GET`
@@ -218,7 +268,7 @@ This API endpoint is used to obtain a JWT access token for authentication. You n
     }
     ```
 
-## 4. Add New Staff Member (Manager API)
+## 5. Add New Staff Member (Manager API)
 
 - **Endpoint:** `/api/v1/accounts/staff/add/`
 - **Method:** `POST`
@@ -257,7 +307,7 @@ This API endpoint is used to obtain a JWT access token for authentication. You n
     }
     
     
-## 5. Get Staff Members Details
+## 6. Get Staff Members Details
 
 - **Endpoint:** `/api/accounts/staff/list/`
 - **Method:** `GET`
@@ -302,7 +352,7 @@ This API endpoint is used to obtain a JWT access token for authentication. You n
   - The `data` field contains a list of staff member details associated with the authenticated manager.
   - Each staff member entry includes the `user` object with personal and role-related information, as well as `employee_id` and `weekly_off` details.
  
-## 6. Update Staff Member Details. (Manager API)
+## 7. Update Staff Member Details. (Manager API)
 
 - **Endpoint:** `/api/v1/accounts/staff/update/`
 - **Method:** `PATCH`
@@ -360,7 +410,7 @@ This API endpoint is used to obtain a JWT access token for authentication. You n
 
       ```
 
-## 7. Assign Staff Shift (Manager API)
+## 8. Assign Staff Shift (Manager API)
 
 - **Endpoint:** `/api/v1/master/staff/shift/schedule/`
 - **Method:** `POST`
@@ -430,7 +480,7 @@ This API endpoint is used to obtain a JWT access token for authentication. You n
       }
       ```
 
-## 8. Assign Staff Weekly Off (Manager API)
+## 9. Assign Staff Weekly Off (Manager API)
 
 - **Endpoint:** `/api/v1/master/staff/weekly-off/assign/`
 - **Method:** `POST`
@@ -505,7 +555,7 @@ This API endpoint is used to obtain a JWT access token for authentication. You n
       }
       ```
 
-## 9. Get Staff Member Assigned Shifts
+## 10. Get Staff Member Assigned Shifts (Staff Member API)
 
 - **Endpoint:** `/api/v1/master/staff/assigned/shifts/`
 - **Method:** `GET`
@@ -559,7 +609,7 @@ This API endpoint is used to obtain a JWT access token for authentication. You n
       }
       ```
 
-## 10. Mark Staff Attendance
+## 11. Mark Staff Attendance (Staff Member API)
 
 - **Endpoint:** `/api/v1/master/staff/attendance/mark/`
 - **Method:** `POST`
@@ -678,3 +728,340 @@ This API endpoint is used to obtain a JWT access token for authentication. You n
       ```
 
 
+## 12. Request for Interchange Shifts
+
+**Endpoint:**
+
+`POST /api/v1/master/staff/shift/interchange/request/`
+
+**Request Body:**
+
+```json
+{
+    "target_email": "target@example.com",
+    "requester_shift_id": 1,
+    "target_shift_id": 2
+}
+**Description:**
+
+This API endpoint allows a staff user to request an interchange of shifts with another staff member.
+
+**Success Response:**
+
+* **Status Code:** `200 OK`
+* **Content:**
+  ```json
+  {
+    "data": {
+      "id": 3,
+      "requester": {
+        "user": {
+          "uuid": "3dfe1abe-512c-4a0a-8020-924da1ad9183",
+          "first_name": "Nobu",
+          "last_name": "staff2",
+          "image": null,
+          "email": "staff2@gmail.com",
+          "role": "staff",
+          "created_on": "2024-07-21T18:47:02.875884+05:30",
+          "updated_on": "2024-07-21T18:48:52.769292+05:30"
+        },
+        "employee_id": "emp_b0e69c",
+        "weekly_off": [
+          "saturday",
+          "tuesday"
+        ]
+      },
+      "target": {
+        "user": {
+          "uuid": "806dfcd5-a560-4192-9216-d213d10b8beb",
+          "first_name": "Aftab",
+          "last_name": null,
+          "image": null,
+          "email": "aftabahmad41442@gmail.com",
+          "role": "staff",
+          "created_on": "2024-07-21T18:46:13.711844+05:30",
+          "updated_on": "2024-07-21T18:46:13.916094+05:30"
+        },
+        "employee_id": "emp_532b30",
+        "weekly_off": [
+          "saturday",
+          "sunday"
+        ]
+      },
+      "requester_shift": {
+        "id": 15,
+        "staff_member_id": 6,
+        "day": "sunday",
+        "shift_start": "18:03",
+        "shift_end": "10:00"
+      },
+      "target_shift": {
+        "id": 16,
+        "staff_member_id": 5,
+        "day": "sunday",
+        "shift_start": "18:30",
+        "shift_end": "22:06"
+      },
+      "status": "approved"
+    }
+  }
+  ```
+
+**Errors:**
+
+* **Code:** `StaffUserNotFound`
+  
+  * **Description:** The staff user with the provided email was not found.
+  * **Response:**
+    ```json
+    {
+      "id": 1,
+      "code": "StaffUserNotFound",
+      "status_code": 404,
+      "detail": "The staff user with the provided email was not found.",
+      "description": "",
+      "count": 1
+    }
+    ```
+
+* **Code:** `RequesterShiftNotFound`
+  
+  * **Description:** The shift with the provided ID for the requester was not found.
+  * **Response:**
+    ```json
+    {
+      "id": 2,
+      "code": "RequesterShiftNotFound",
+      "status_code": 404,
+      "detail": "The shift with the provided ID for the requester was not found.",
+      "description": "",
+      "count": 1
+    }
+    ```
+
+* **Code:** `TargetedShiftNotFound`
+  
+  * **Description:** The shift with the provided ID for the target was not found.
+  * **Response:**
+    ```json
+    {
+      "id": 3,
+      "code": "TargetedShiftNotFound",
+      "status_code": 404,
+      "detail": "The shift with the provided ID for the target was not found.",
+      "description": "",
+      "count": 1
+    }
+    ```
+
+* **Code:** `SameDayMustInInterchange`
+  
+  * **Description:** Both shifts must be on the same day to request an interchange.
+  * **Response:**
+    ```json
+    {
+      "id": 4,
+      "code": "SameDayMustInInterchange",
+      "status_code": 400,
+      "detail": "Both shifts must be on the same day to request an interchange.",
+      "description": "",
+      "count": 1
+    }
+    ```
+
+* **Code:** `ShiftInterchangeRequestAlreadyPending`
+  
+  * **Description:** There is already a pending interchange request for these shifts.
+  * **Response:**
+    ```json
+    {
+      "id": 5,
+      "code": "ShiftInterchangeRequestAlreadyPending",
+      "status_code": 400,
+      "detail": "There is already a pending interchange request for these shifts.",
+      "description": "",
+      "count": 1
+    }
+    ```
+
+## 12. Shift Interchange Request List API
+
+**Endpoint:** `GET /api/v1/master/staff/shift/interchange/request/list/`
+
+**Description:** Retrieves a list of shift interchange requests for the authenticated staff user.
+
+**Authentication:** Required (JWT Authentication)
+
+**Response Schema:**
+
+* **Success:**
+  ```json
+  {
+    "data": [
+      {
+        "id": 1,
+        "requester": {
+          "user": {
+            "uuid": "user-uuid-1",
+            "first_name": "RequesterFirstName",
+            "last_name": "RequesterLastName",
+            "image": null,
+            "email": "requester@example.com",
+            "role": "staff",
+            "created_on": "2024-07-21T18:47:02.875884+05:30",
+            "updated_on": "2024-07-21T18:48:52.769292+05:30"
+          },
+          "employee_id": "emp_12345",
+          "weekly_off": [
+            "saturday",
+            "tuesday"
+          ]
+        },
+        "target": {
+          "user": {
+            "uuid": "user-uuid-2",
+            "first_name": "TargetFirstName",
+            "last_name": "TargetLastName",
+            "image": null,
+            "email": "target@example.com",
+            "role": "staff",
+            "created_on": "2024-07-21T18:46:13.711844+05:30",
+            "updated_on": "2024-07-21T18:46:13.916094+05:30"
+          },
+          "employee_id": "emp_67890",
+          "weekly_off": [
+            "saturday",
+            "sunday"
+          ]
+        },
+        "requester_shift": {
+          "id": 1,
+          "staff_member_id": 1,
+          "day": "sunday",
+          "shift_start": "09:00",
+          "shift_end": "17:00"
+        },
+        "target_shift": {
+          "id": 2,
+          "staff_member_id": 2,
+          "day": "sunday",
+          "shift_start": "17:00",
+          "shift_end": "01:00"
+        },
+        "status": "pending"
+      }
+    ]
+  } 
+  ```
+
+**Errors:**
+
+* **Code:** `UserMustBeStaffMember`
+
+  * **Description:** The authenticated user must be a staff member to access this resource.
+  * **Response:**
+    ```json
+    {
+      "id": 6,
+      "code": "UserMustBeStaffMember",
+      "status_code": 403,
+      "detail": "The authenticated user must be a staff member to access this resource.",
+      "description": "",
+      "count": 1
+    }
+    ```
+
+
+## 13. Shift Interchange Request Status Update API
+
+**Endpoint:** `POST /api/v1/master/staff/shift/interchange/request/status/update/`
+
+**Description:** Updates the status of a shift interchange request.
+
+**Authentication:** Required (JWT Authentication)
+
+**Request Body:**
+
+```json
+{
+  "request_id": 1,
+  "status": "approved" or "rejected"
+}
+
+**Response Schema:**
+
+* **Success:**
+
+```json
+{
+  "data": {
+    "id": 1,
+    "requester": {
+      "user": {
+        "uuid": "user-uuid-1",
+        "first_name": "RequesterFirstName",
+        "last_name": "RequesterLastName",
+        "image": null,
+        "email": "requester@example.com",
+        "role": "staff",
+        "created_on": "2024-07-21T18:47:02.875884+05:30",
+        "updated_on": "2024-07-21T18:48:52.769292+05:30"
+      },
+      "employee_id": "emp_12345",
+      "weekly_off": [
+        "saturday",
+        "tuesday"
+      ]
+    },
+    "target": {
+      "user": {
+        "uuid": "user-uuid-2",
+        "first_name": "TargetFirstName",
+        "last_name": "TargetLastName",
+        "image": null,
+        "email": "target@example.com",
+        "role": "staff",
+        "created_on": "2024-07-21T18:46:13.711844+05:30",
+        "updated_on": "2024-07-21T18:46:13.916094+05:30"
+      },
+      "employee_id": "emp_67890",
+      "weekly_off": [
+        "saturday",
+        "sunday"
+      ]
+    },
+    "requester_shift": {
+      "id": 1,
+      "staff_member_id": 1,
+      "day": "sunday",
+      "shift_start": "09:00",
+      "shift_end": "17:00"
+    },
+    "target_shift": {
+      "id": 2,
+      "staff_member_id": 2,
+      "day": "sunday",
+      "shift_start": "17:00",
+      "shift_end": "01:00"
+    },
+    "status": "approved"
+  }
+}
+```
+**Errors:**
+
+* **Code:** `InterchangeRequestNotFound`
+  
+  * **Description:** The specified shift interchange request was not found.
+  * **Response:**
+
+```json
+{
+  "id": 7,
+  "code": "InterchangeRequestNotFound",
+  "status_code": 404,
+  "detail": "The specified shift interchange request was not found.",
+  "description": "",
+  "count": 1
+}
+```

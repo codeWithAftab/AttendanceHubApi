@@ -28,20 +28,22 @@ Functions:
 """
 
 
-
-from .models import StaffManager, StaffMember, CustomUser
+# standard imports
+from django.db import transaction, IntegrityError
 from apps.accounts.services import create_user
 from apps.accounts.decorators import manager_role_required, staff_member_role_required
 from django.utils.timezone import now
 import pytz
+
 # local imports
+from .models import StaffManager, StaffMember, CustomUser
 from .models import Shift, Attendance
 from helper.validation import validate_weekly_off_list
 from typing import Dict
 from schema.request import ShiftSchema, VALID_DAYS
 from exceptions.restapi import CustomAPIException
 from .queries import *
-from .validations import validate_attendance_request
+from .validations import validate_attendance_request, validate_shift_interchange_request
 
 
 # internal use methods
@@ -206,3 +208,130 @@ def mark_attendance(*,
         raise CustomAPIException(error_code="UserMustBeStaffMember")
     
     return _mark_staff_attendance(staff_member=staff_member, image=image)
+
+
+def _create_shift_interchange_request(*, 
+                                      requester: StaffMember,
+                                      target: StaffMember,
+                                      requester_shift: Shift,
+                                      target_shift: Shift ):
+    if is_any_pending_interchange_request_exist(target=target, 
+                                                requester=requester,
+                                                target_shift=target_shift, 
+                                                requester_shift=requester_shift):
+        
+        raise CustomAPIException(error_code="ShiftInterchangeRequestAlreadyPending")
+    
+    shift_request = ShiftInterchangeRequest.objects.create(
+                requester=requester,
+                target=target,
+                requester_shift=requester_shift,
+                target_shift=target_shift
+        )
+    return shift_request
+
+
+@staff_member_role_required
+def request_shift_interchange(*,
+                              staff_user: CustomUser,
+                              target_email: str,
+                              requester_shift_id: int,
+                              target_shift_id: int,
+                              **kwargs
+                              ):
+    """
+    Handles a request for shift interchange between staff members.
+
+    Args:
+        staff_user (CustomUser): The staff user making the request.
+        target_email (str): The email of the staff member whose shift is being targeted.
+        requester_shift_id (int): The ID of the shift the requester wants to interchange.
+        target_shift_id (int): The ID of the shift the target staff member currently has.
+
+    Raises:
+        CustomAPIException: If validation or processing fails.
+    """
+
+    targeted_staff_member = get_staff_member_by_email(email=target_email)
+    requester_staff_member = get_staff_member_by_email(email=staff_user.email)
+
+    # Validate the shift interchange request
+    requester_shift, target_shift = validate_shift_interchange_request(
+        requester_staff_member=requester_staff_member,
+        requester_shift_id=requester_shift_id,
+        targeted_staff_member=targeted_staff_member,
+        target_shift_id=target_shift_id
+    )
+
+    return _create_shift_interchange_request(requester=requester_staff_member, 
+                                             target=targeted_staff_member, 
+                                             requester_shift=requester_shift,
+                                             target_shift=target_shift )
+    
+
+@staff_member_role_required
+def get_shift_interchange_requests(*,
+                                  staff_user: CustomUser ):
+    staff_member = get_staff_member_by_email(email=staff_user.email)
+    return ShiftInterchangeRequest.objects.filter(target=staff_member, status="pending")
+
+
+def __interchange_shift(interchange_request):
+    """
+    Interchange shifts between two staff members as per the interchange request.
+
+    Args:
+        interchange_request (ShiftInterchangeRequest): The interchange request object containing the shifts to be interchanged.
+    """
+    requester_shift = interchange_request.requester_shift
+    target_shift = interchange_request.target_shift
+
+    # Swap the staff members assigned to the shifts
+    requester_shift.shift_start, target_shift.shift_start = target_shift.shift_start, requester_shift.shift_start
+    requester_shift.shift_end, target_shift.shift_end = target_shift.shift_end, requester_shift.shift_end
+
+    # Mark the interchange request as approved
+    interchange_request.status = 'approved'
+
+    # Save the updated shifts and interchange request
+    try:
+        with transaction.atomic():
+            requester_shift.save()
+            target_shift.save()
+            interchange_request.save()
+
+            print("Shifts successfully interchanged.")
+        return interchange_request
+    
+    except IntegrityError as e:
+        print("Error during shift interchange:", str(e))
+        # Handle exception (e.g., rollback, log error)
+        raise CustomAPIException(detail=f"Error :- {e}")
+
+
+def _approve_or_reject_shift_interchange_request(interchange_request: ShiftInterchangeRequest, status: str):
+    if status == "rejected":
+        interchange_request.status = "rejected"
+        interchange_request.save()
+        return interchange_request
+    
+    
+    return __interchange_shift(interchange_request=interchange_request)
+
+@staff_member_role_required
+def update_shift_interchange_request_status(*, 
+                                     staff_user: CustomUser,
+                                     request_id: int,
+                                     status: str,
+                                     **kwargs ):
+    staff_member = get_staff_member_by_email(email=staff_user.email)
+    interchange_request = get_shift_interchange_request_by_id(staff_member=staff_member, 
+                                                              request_id=request_id )
+    
+    if not interchange_request:
+        raise CustomAPIException(error_code="InterchangeRequestNotFound")
+    
+    return _approve_or_reject_shift_interchange_request(interchange_request=interchange_request, status=status)
+    
+
+

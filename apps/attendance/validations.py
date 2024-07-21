@@ -15,7 +15,7 @@ from .models import StaffMember
 from django.utils.timezone import now, make_aware
 from datetime import datetime, timedelta
 from django.conf import settings  # Import settings
-from .queries import get_staff_member_shift
+from .queries import *
 
 def validate_attendance_request(staff_member: StaffMember, current_day: str, current_datetime):
     """
@@ -74,3 +74,40 @@ def validate_attendance_request(staff_member: StaffMember, current_day: str, cur
             detail="Attendance can only be marked within 1 hour of your shift end time.",
             error_code="OutOfAttendanceWindow"
         )
+    
+
+def validate_shift_interchange_request(*, 
+                                       requester_staff_member: StaffMember, 
+                                       requester_shift_id: int, 
+                                       targeted_staff_member: StaffMember, 
+                                       target_shift_id: int) -> None:
+    """
+    Validates the shift interchange request.
+
+    Args:
+        requester_staff_member (StaffMember): The staff member requesting the shift interchange.
+        requester_shift_id (int): The ID of the requester's shift.
+        targeted_staff_member (StaffMember): The staff member targeted for the shift interchange.
+        target_shift_id (int): The ID of the target's shift.
+
+    Raises:
+        CustomAPIException: If validation fails for various reasons.
+    """
+    # Check if targeted staff member exists
+    if not targeted_staff_member:
+        raise CustomAPIException(detail="Targeted staff member not found.", error_code="StaffUserNotFound")
+    
+    # Fetch and validate requester's shift
+    requester_shift = get_staff_member_shift_by_id(staff_member=requester_staff_member, shift_id=requester_shift_id)
+    if not requester_shift:
+        raise CustomAPIException(detail="Requester shift not found.", error_code="RequesterShiftNotFound")
+    
+    # Fetch and validate target's shift
+    target_shift = get_staff_member_shift_by_id(staff_member=targeted_staff_member, shift_id=target_shift_id)
+    if not target_shift:
+        raise CustomAPIException(detail="Targeted shift not found.", error_code="TargetedShiftNotFound")
+    
+    if target_shift.day != requester_shift.day:
+        raise CustomAPIException(detail="Day of both Shift must be Same.", error_code="SameDayMustInInterchange")
+
+    return requester_shift, target_shift
