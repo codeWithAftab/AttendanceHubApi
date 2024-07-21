@@ -117,9 +117,12 @@ SIMPLE_JWT = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE =  'Asia/Kolkata'
+TIMEZONE =  'Asia/Kolkata'
 
 USE_I18N = True
+
+USE_L10N = True
 
 USE_TZ = True
 

@@ -2,7 +2,7 @@
 from .models import *
 from exceptions.restapi import CustomAPIException
 from .queries import *
-from .decorators import manager_role_required
+from apps.accounts.decorators import manager_role_required
 
 def create_user(*, email: str, password: str, **validated_data) -> CustomUser:
     """

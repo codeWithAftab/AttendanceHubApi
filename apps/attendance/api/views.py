@@ -63,6 +63,8 @@ class AssignStaffWeeklyOffAPI(APIView):
         return Response({"data": output_serializer.data})
 
 
+
+# staff user APIS.
 class StaffMemberAssignedShifts(APIView):
     authentication_classes = [JWTAuthentication]
 
