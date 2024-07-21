@@ -135,12 +135,12 @@ AttendanceHub/
 
 6. **Import the `create_error` function** from the `scripts` module:
     ```python
-    from scripts import create_error
+    from scripts.errors import create_errors
     ```
 
 7. **Run the function** to store all predefined error codes in the database:
     ```python
-    create_error()
+    create_errors()
     ```
 
 8. **Exit the Django Shell**:
