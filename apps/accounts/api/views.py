@@ -3,6 +3,7 @@ from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 # third part imports.
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -35,6 +36,7 @@ class RegisterAPI(APIView):
 
 class UpdateUserAPI(APIView):
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     class InputSerializer(serializers.Serializer):
         first_name = serializers.CharField( max_length=20, required=False )
@@ -55,6 +57,7 @@ class UpdateUserAPI(APIView):
 
 class UserProfileAPI(APIView):
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     
     def get(self, request, *args, **kwargs):
         serializer = UserSerializer(request.user, context={"request":request})
@@ -67,6 +70,7 @@ class UserProfileAPI(APIView):
 
 class AddNewStaffMemberAPI(APIView):
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     class InputSerializer(serializers.Serializer):
         first_name = serializers.CharField( max_length=20 )
@@ -88,6 +92,8 @@ class AddNewStaffMemberAPI(APIView):
 
 class GetStaffMembersDetailAPI(APIView):
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
 
     def get(self, request, *args,  **kwargs):
         staff_members = get_all_staff_members(manager=request.user)
@@ -101,6 +107,7 @@ class GetStaffMembersDetailAPI(APIView):
 
 class UpdateStaffMemberDetailsAPI(APIView):
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     class InputSerializer(serializers.Serializer):
         employee_id = serializers.CharField( max_length=20 )

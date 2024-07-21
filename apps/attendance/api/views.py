@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from exceptions.restapi import CustomAPIException
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 # local imports 
 from helper.serializers import inline_serializer
@@ -14,6 +15,7 @@ from .serializers import *
 
 class StaffShiftScheduleAPI(APIView):
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     class InputSerializer(serializers.Serializer):
         employee_id = serializers.CharField()
@@ -38,6 +40,7 @@ class StaffShiftScheduleAPI(APIView):
 
 class AssignStaffWeeklyOffAPI(APIView):
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     class InputSerializer(serializers.Serializer):
         employee_id = serializers.CharField()
@@ -65,6 +68,7 @@ class AssignStaffWeeklyOffAPI(APIView):
 # staff user APIS.
 class StaffMemberAssignedShifts(APIView):
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args,  **kwargs):
         shifts = get_staff_assigned_shifts(staff_user=request.user)
@@ -78,6 +82,7 @@ class StaffMemberAssignedShifts(APIView):
 
 class MarkStaffAttendanceAPI(APIView):
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     class InputSerializer(serializers.Serializer):
         image = serializers.ImageField()
@@ -96,6 +101,7 @@ class MarkStaffAttendanceAPI(APIView):
 
 class RequestForInterchangeShiftsAPI(APIView):
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     class InputSerializer(serializers.Serializer):
         target_email = serializers.EmailField()
@@ -116,6 +122,7 @@ class RequestForInterchangeShiftsAPI(APIView):
 
 class ShiftInterchangeRequestListAPI(APIView):
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, **kwargs):
         shift_interchange_request = get_shift_interchange_requests( staff_user=request.user )
@@ -124,6 +131,8 @@ class ShiftInterchangeRequestListAPI(APIView):
 
 class ShiftInterchangeRequestStatusUpdateAPI(APIView):
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    
     
     class InputSerializer(serializers.Serializer):
         request_id = serializers.IntegerField()
