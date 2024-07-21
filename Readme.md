@@ -124,9 +124,29 @@ AttendanceHub/
 
 4. Apply database Migrations:
  ```bash
-   python manage.py makemigrations
-   python manage.py migrate
+   python manage-dev.py makemigrations
+   python manage-dev.py migrate
   ```
+
+5. Run Error code Script to store all predefined error code in db:
+```bash
+   python manage-dev.py shell
+  ```
+
+6. **Import the `create_error` function** from the `scripts` module:
+    ```python
+    from scripts import create_error
+    ```
+
+7. **Run the function** to store all predefined error codes in the database:
+    ```python
+    create_error()
+    ```
+
+8. **Exit the Django Shell**:
+    ```python
+    exit()
+    ```
 
 # API Documentation
 
