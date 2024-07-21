@@ -21,7 +21,7 @@ class RegisterAPI(APIView):
         image = serializers.ImageField( required=False )
         email = serializers.EmailField( required=True )
         password = serializers.CharField( required=True )
-        role = serializers.ChoiceField( choices=USER_ROLES, default="staff" )
+        role = serializers.ChoiceField( choices=USER_ROLES, default="manager" )
 
     def post(self, request, *args,  **kwargs):
         serializer = self.InputSerializer(data=request.data)
@@ -29,7 +29,6 @@ class RegisterAPI(APIView):
             serializer.is_valid(raise_exception=True)
         except Exception as e:
             raise CustomAPIException(detail=str(e), error_code="MissingFieldError")
-        
    
         user = create_user( **serializer.validated_data )
         return Response({"data": UserSerializer(user, context={"request":request}).data})

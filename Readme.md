@@ -330,3 +330,322 @@ AttendanceHub/
     }
 
       ```
+
+## 6. Assign Staff Shift (Manager API)
+
+- **Endpoint:** `/api/staff/shift/`
+- **Method:** `POST`
+- **Authentication:** Required (JWT)
+- **Request Body:**
+  ```json
+  {
+    "employee_id": "string", // Required
+    "shift": {
+      "day": "string", // Required, e.g., "monday", "tuesday"
+      "shift_start": "string", // Required, format: "HH:MM"
+      "shift_end": "string" // Required, format: "HH:MM"
+    }
+  }
+ 
+ * **Request Body:**
+  * `employee_id`: (required) Unique identifier for the staff member.
+  * `shift`: (required) Contains the details of the shift.
+    * `day`: Day of the week the shift is assigned (must be a valid day from `WEEK_DAYS`).
+    * `shift_start`: Start time of the shift (format: "HH:MM").
+    * `shift_end`: End time of the shift (format: "HH:MM").
+
+* **Response:**
+  * **Status Code:** `200 OK`
+  * **Content:**
+    ```json
+    {
+      "data": {
+        "staff_member_id": "integer",
+        "day": "string",
+        "shift_start": "string",
+        "shift_end": "string"
+      }
+    }
+    ```
+    * `staff_member_id`: Unique identifier for the staff member.
+    * `day`: Day of the week the shift was assigned.
+    * `shift_start`: Start time of the assigned shift.
+    * `shift_end`: End time of the assigned shift.
+
+* **Errors:**
+  * **Code:** `CannotAssignWeekOffShift`
+    * **Description:** Manager can only assign shifts on weekdays, not on weekends.
+    * **Response:**
+      ```json
+      {
+        "id": 8,
+        "code": "CannotAssignWeekOffShift",
+        "status_code": 400,
+        "detail": "Manager can only assign shift on week days not for week days.",
+        "description": "",
+        "count": 1
+      }
+      ```
+
+  * **Code:** `WrongEmployeeId`
+    * **Description:** The provided employee ID is incorrect or does not exist.
+    * **Response:**
+      ```json
+      {
+        "id": 9,
+        "code": "WrongEmployeeId",
+        "status_code": 400,
+        "detail": "The provided employee ID is incorrect or does not exist.",
+        "description": "",
+        "count": 1
+      }
+      ```
+
+## 7. Assign Staff Weekly Off (Manager API)
+
+- **Endpoint:** `/api/staff/weekly-off/`
+- **Method:** `POST`
+- **Authentication:** Required (JWT)
+- **Request Body:**
+  ```json
+  {
+    "employee_id": "string", // Required
+    "weekly_off": [
+      "string", // Required, e.g., "monday"
+      "string"  // Required, e.g., "tuesday"
+    ]
+  }
+* **Request Body:**
+  * `employee_id`: (required) Unique identifier for the staff member.
+  * `weekly_off`: (required) List of exactly two days for the staff member's weekly off.
+    - Each entry must be a valid day from `WEEK_DAYS`.
+
+* **Response:**
+  * **Status Code:** `200 OK`
+  * **Content:**
+    ```json
+    {
+      "data": {
+        "uuid": "string",
+        "first_name": "string",
+        "last_name": "string or null",
+        "image": "string or null",
+        "email": "string",
+        "role": "integer",
+        "weekly_off": [
+          "string", // e.g., "monday"
+          "string"  // e.g., "tuesday"
+        ]
+      }
+    }
+    ```
+    * `uuid`: Unique identifier for the staff member.
+    * `first_name`: Staff member's first name.
+    * `last_name`: Staff member's last name (can be null).
+    * `image`: URL to the staff member's profile image (can be null).
+    * `email`: Staff member's email address.
+    * `role`: Staff member's role, represented as an integer.
+    * `weekly_off`: List of days designated as weekly off.
+
+* **Errors:**
+  * **Code:** `WrongEmployeeId`
+    * **Description:** The provided employee ID is incorrect or does not exist.
+    * **Response:**
+      ```json
+      {
+        "id": 9,
+        "code": "WrongEmployeeId",
+        "status_code": 400,
+        "detail": "The provided employee ID is incorrect or does not exist.",
+        "description": "",
+        "count": 1
+      }
+      ```
+
+  * **Code:** `MissingFieldError`
+    * **Description:** Required fields are missing or invalid.
+    * **Response:**
+      ```json
+      {
+        "id": 8,
+        "code": "MissingFieldError",
+        "status_code": 400,
+        "detail": "You must specify exactly two days for weekly off.",
+        "description": "",
+        "count": 1
+      }
+      ```
+
+## 8. Staff Member Assigned Shifts
+
+- **Endpoint:** `/api/staff/assigned-shifts/`
+- **Method:** `GET`
+- **Authentication:** Required (JWT)
+
+- **Response:**
+  - **Status Code:** `200 OK`
+  - **Content:**
+    ```json
+    {
+      "data": [
+        {
+          "staff_member_id": "integer",
+          "day": "string",
+          "shift_start": "string",
+          "shift_end": "string"
+        }
+      ]
+    }
+    ```
+    * `staff_member_id`: Unique identifier for the staff member.
+    * `day`: Day of the week for the shift.
+    * `shift_start`: Start time of the shift (format: "HH:MM").
+    * `shift_end`: End time of the shift (format: "HH:MM").
+
+- **Errors:**
+  * **Code:** `UserMustBeStaffMember`
+    * **Description:** The user must be a staff member to access this endpoint.
+    * **Response:**
+      ```json
+      {
+        "id": 10,
+        "code": "UserMustBeStaffMember",
+        "status_code": 403,
+        "detail": "The user must be a staff member to access this resource.",
+        "description": "",
+        "count": 1
+      }
+      ```
+  * **Code:** `MissingFieldError`
+    * **Description:** Required fields are missing or invalid.
+    * **Response:**
+      ```json
+      {
+        "id": 8,
+        "code": "MissingFieldError",
+        "status_code": 400,
+        "detail": "You must specify exactly two days for weekly off.",
+        "description": "",
+        "count": 1
+      }
+      ```
+
+## 9. Mark Staff Attendance
+
+- **Endpoint:** `/api/staff/mark-attendance/`
+- **Method:** `POST`
+- **Authentication:** Required (JWT)
+- **Request Body:**
+  ```json
+  {
+    "image": "file" // Required
+  }
+
+* `image`: (required) Image file for marking attendance.
+
+* **Response:**
+  * **Status Code:** `200 OK`
+  * **Content:**
+    ```json
+    {
+      "data": {
+        "attendance_id": "integer",
+        "staff_member_id": "integer",
+        "date": "string",
+        "status": "string",
+        "image_url": "string"
+      }
+    }
+    ```
+    * `attendance_id`: Unique identifier for the attendance record.
+    * `staff_member_id`: Unique identifier for the staff member.
+    * `date`: Date of the attendance.
+    * `status`: Status of the attendance (e.g., "Present", "Absent").
+    * `image_url`: URL to the uploaded image.
+
+* **Errors:**
+  * **Code:** `AttendanceAlreadyMarked`
+    * **Description:** Attendance has already been marked for today.
+    * **Response:**
+      ```json
+      {
+        "id": 11,
+        "code": "AttendanceAlreadyMarked",
+        "status_code": 400,
+        "detail": "Attendance has already been marked for today.",
+        "description": "",
+        "count": 1
+      }
+      ```
+
+  * **Code:** `UserMustBeStaffMember`
+    * **Description:** The user must be a staff member to mark attendance.
+    * **Response:**
+      ```json
+      {
+        "id": 12,
+        "code": "UserMustBeStaffMember",
+        "status_code": 403,
+        "detail": "The user must be a staff member to access this resource.",
+        "description": "",
+        "count": 1
+      }
+      ```
+
+  * **Code:** `WeeklyOffToday`
+    * **Description:** The user is on weekly off today.
+    * **Response:**
+      ```json
+      {
+        "id": 13,
+        "code": "WeeklyOffToday",
+        "status_code": 400,
+        "detail": "The user is on weekly off today.",
+        "description": "",
+        "count": 1
+      }
+      ```
+
+  * **Code:** `NoShiftForToday`
+    * **Description:** No shift assigned for today.
+    * **Response:**
+      ```json
+      {
+        "id": 14,
+        "code": "NoShiftForToday",
+        "status_code": 400,
+        "detail": "No shift assigned for today.",
+        "description": "",
+        "count": 1
+      }
+      ```
+
+  * **Code:** `OutOfShiftHours`
+    * **Description:** Attendance marking is outside of shift hours.
+    * **Response:**
+      ```json
+      {
+        "id": 15,
+        "code": "OutOfShiftHours",
+        "status_code": 400,
+        "detail": "Attendance marking is outside of shift hours.",
+        "description": "",
+        "count": 1
+      }
+      ```
+
+  * **Code:** `OutOfAttendanceWindow`
+    * **Description:** Attendance can only be marked within the specified time window.
+    * **Response:**
+      ```json
+      {
+        "id": 16,
+        "code": "OutOfAttendanceWindow",
+        "status_code": 400,
+        "detail": "Attendance can only be marked within the specified time window.",
+        "description": "",
+        "count": 1
+      }
+      ```
+
+
